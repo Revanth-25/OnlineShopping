@@ -169,9 +169,6 @@ class TestUserService {
 		// Create a userDto with a non-existent email
 		UserDto userDto = new UserDto();
 		userDto.setUserEmail("notexistinguser@gmail.com");
-		User user = new User();
-		user.setEmail("existinguser@gmail.com");
-//		Mockito.when(userRepository.findByEmailIgnoreCase(Mockito.anyString())).thenReturn(Optional.empty());
 		Assertions.assertThrows(UserNotFoundException.class, () -> userService.userLogin(userDto));
 	}
 	
@@ -209,10 +206,9 @@ class TestUserService {
 	@Test
     void getUserProfileByEmail_UserNotFound()
 	{
+	    // Create a userDto for a non-existent user
 		UserDto userDto = new UserDto();
 		userDto.setUserEmail("notexistinguser@gmail.com");
-		User user = new User();
-		user.setEmail("existinguser@gmail.com");
 		Assertions.assertThrows(UserNotFoundException.class, () -> userService.getUserProfileByEmail("notexistinguser@gmail.com"));
 	}
 
@@ -242,14 +238,15 @@ class TestUserService {
 
 		Assertions.assertEquals("Successfully Updated Profile", output);
 	}
+	
 	@Test
 	void updateUserDetails_UserNotFound() {
+	    // Create a userDto for a non-existent user
 		UserDto userDto = new UserDto();
 		userDto.setUserEmail("notexistinguser@gmail.com");
-		User user = new User();
-		user.setEmail("existinguser@gmail.com");
 		Assertions.assertThrows(UserNotFoundException.class, () -> userService.getUserProfileByEmail("notexistinguser@gmail.com"));
 	}
+	
 	@Test
 	void updateUserDetails_InvalidMobileNumber() {
 		// Create a userDto with an invalid mobile number
@@ -258,20 +255,23 @@ class TestUserService {
 		userDto.setPhonenumber(112233);
 		User user = new User();
 		user.setEmail(userDto.getUserEmail());
-		Mockito.when(userRepository.findByEmailIgnoreCase(userDto.getUserEmail())).thenReturn(Optional.empty());
+		Mockito.when(userRepository.findByEmailIgnoreCase(userDto.getUserEmail())).thenReturn(Optional.of(user));
 		Assertions.assertThrows(UserCreationException.class, () -> userService.updateUserDetails(userDto));
 	}
+
+	@Test
 	void updateUserDetails_InvalidUserName() {
 		// Create a userDto with an invalid mobile number
 		UserDto userDto = new UserDto();
 		userDto.setUserEmail("revanth@gmail.com");
 		userDto.setUserName("99aBcd0");
 		
-		Mockito.when(userRepository.findByEmailIgnoreCase("revanth@gmail.com")).thenReturn(Optional.empty());
+		User user = new User();
+		user.setEmail(userDto.getUserEmail());
+		Mockito.when(userRepository.findByEmailIgnoreCase("revanth@gmail.com")).thenReturn(Optional.of(user));
 		
 		Assertions.assertThrows(UserCreationException.class, () -> userService.updateUserDetails(userDto));
 	}
-
 
 	@Test
 	void updatePassword() {
@@ -297,7 +297,50 @@ class TestUserService {
 
 		Assertions.assertEquals("Password Updated", output);
 	}
+	
+    @Test
+    void updatePassword_IncorrectOldPassword() {
+        // Create a userDto with an incorrect old password
+        UserDto userDto = new UserDto();
+		userDto.setUserEmail("revanth.pasupula@gmail.com");
+		userDto.setOldPassword("wrongpassword");  // Set a different old password
+        
+		User user = new User();
+		user.setUserName("initialusername");
+		user.setEmail(userDto.getUserEmail());
+		user.setPassword("revanth");
+        Mockito.when(userRepository.findByEmailIgnoreCase(userDto.getUserEmail())).thenReturn(Optional.of(user));
+        Assertions.assertThrows(PasswordMissmatchException.class, () -> userService.updatePassword(userDto));
+    }
 
+    @Test
+    void updatePassword_InvalidNewPassword() {
+        // Create a userDto with an invalid new password
+    	UserDto userDto = new UserDto();
+  		userDto.setUserEmail("revanth.pasupula@gmail.com");
+  		userDto.setOldPassword("revanth");  // Set a different old password
+  		userDto.setPassword(null);
+  		userDto.setConfirmPassword(null);
+  		
+		User user = new User();
+		user.setUserName("initialusername");
+		user.setEmail(userDto.getUserEmail());
+		user.setPassword("revanth");
+        
+
+        Mockito.when(userRepository.findByEmailIgnoreCase(userDto.getUserEmail())).thenReturn(Optional.of(user));
+
+        Assertions.assertThrows(InvalidPasswordException.class, () -> userService.updatePassword(userDto));
+    }
+    
+    @Test
+    void updatePassword_UserNotFound() {
+        // Create a userDto for a non-existent user
+        UserDto userDto = new UserDto();
+        userDto.setUserName("notexistinguser@gmail.com"); 
+        Assertions.assertThrows(UserNotFoundException.class, () -> userService.updatePassword(userDto));
+    }
+    
 	@Test
 	void deleteUser() {
 		UserDto userDto = new UserDto();
@@ -321,5 +364,28 @@ class TestUserService {
 		Mockito.verify(userRepository, Mockito.times(1)).delete(user);
 
 		Assertions.assertEquals("Account deleted successfully", output);
+	}
+	
+	@Test
+	void deleteUser_InvalidPassword()
+	{
+		UserDto userDto = new UserDto();
+		userDto.setUserEmail("gmail.com");
+		userDto.setPassword("wrongpassword");		
+		User user = new User();
+		user.setEmail(userDto.getUserEmail());
+		user.setPassword("correctpassword");		
+		Mockito.when(userRepository.findByEmailIgnoreCase(userDto.getUserEmail())).thenReturn(Optional.of(user));		
+		Assertions.assertThrows(InvalidPasswordException.class, () -> userService.deleteUser(userDto));
+
+	}
+	
+	@Test
+	void deleteUser_UserNotFound()
+	{
+	    // Create a userDto for a non-existent user
+		UserDto userDto = new UserDto();
+		userDto.setUserEmail("gmail.com");
+		Assertions.assertThrows(UserNotFoundException.class,() -> userService.deleteUser(userDto));		
 	}
 }
