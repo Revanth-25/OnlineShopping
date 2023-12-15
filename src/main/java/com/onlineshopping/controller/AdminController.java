@@ -26,8 +26,8 @@ public class AdminController {
 	AdminService adminService;
 	
 	@PostMapping("/addProduct")
-    public ResponseEntity<String> addProduct(@RequestBody Product product){
-    	return new ResponseEntity<String>(adminService.addProducts(product), HttpStatus.OK);
+    public ResponseEntity<String> addProduct(@RequestBody ProductDto productDto){
+    	return new ResponseEntity<>(adminService.addProducts(productDto), HttpStatus.OK);
     }
 	
 	@PutMapping("/updateProduct")
@@ -36,9 +36,9 @@ public class AdminController {
 	}
 	
 	@DeleteMapping("/deleteProduct/{prodName}")
-	public ResponseEntity<String> deleteProduct(@PathVariable("prodName") String productName)
+	public ResponseEntity<String> deleteProduct(@RequestBody ProductDto productDto)
 	{
-		return new ResponseEntity<>(adminService.deleteProduct(productName),HttpStatus.OK);
+		return new ResponseEntity<>(adminService.deleteProduct(productDto),HttpStatus.OK);
 	}
 
 }

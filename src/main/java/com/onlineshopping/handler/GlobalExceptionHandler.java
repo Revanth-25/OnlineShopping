@@ -13,9 +13,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.onlineshopping.exceptions.AdminNotFoundException;
 import com.onlineshopping.exceptions.CartNotFoundException;
+import com.onlineshopping.exceptions.InvalidEmailException;
+import com.onlineshopping.exceptions.InvalidPasswordException;
 import com.onlineshopping.exceptions.OrderNotFoundException;
+import com.onlineshopping.exceptions.PasswordMissmatchException;
 import com.onlineshopping.exceptions.ProductNotFoundException;
+import com.onlineshopping.exceptions.UserCreationException;
 import com.onlineshopping.exceptions.UserNotFoundException;
 
 @ControllerAdvice
@@ -23,12 +28,60 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
 {
 	ApiError error = new ApiError();
 	
+	@ExceptionHandler(UserCreationException.class)
+	public ResponseEntity<Object> userCreationException(UserCreationException userEx)
+	{
+		error.setStatus(HttpStatus.ALREADY_REPORTED);
+		error.setTimestamp(LocalDateTime.now());
+		error.setMessage(userEx.getMessage());
+		return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(InvalidPasswordException.class)
+	public ResponseEntity<Object> invalidPasswordException(InvalidPasswordException passEx)
+	{
+		error.setStatus(HttpStatus.NOT_FOUND);
+		error.setTimestamp(LocalDateTime.now());
+		error.setMessage(passEx.getMessage());
+		return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(AdminNotFoundException.class)
+	public ResponseEntity<Object> adminNotFoundExciption(AdminNotFoundException passEx)
+	{
+		error.setStatus(HttpStatus.NOT_FOUND);
+		error.setTimestamp(LocalDateTime.now());
+		error.setMessage(passEx.getMessage());
+		return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+	}
+	
+	
+	
+	@ExceptionHandler(PasswordMissmatchException.class)
+	public ResponseEntity<Object> passwordMissmatchException(PasswordMissmatchException passEx)
+	{
+		error.setStatus(HttpStatus.NOT_FOUND);
+		error.setTimestamp(LocalDateTime.now());
+		error.setMessage(passEx.getMessage());
+		return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(InvalidEmailException.class)
+	public ResponseEntity<Object> invalidEmailException(InvalidEmailException passInvalidEx)
+	{
+		error.setStatus(HttpStatus.NOT_FOUND);
+		error.setTimestamp(LocalDateTime.now());
+		error.setMessage(passInvalidEx.getMessage());
+		return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+		
+	}
+	
 	@ExceptionHandler(UserNotFoundException.class)
 	public ResponseEntity<Object> userNotFoundException(UserNotFoundException noUserException)
 	{
 		error.setStatus(HttpStatus.NOT_FOUND);
 		error.setTimestamp(LocalDateTime.now());
-		error.setMessage(noUserException.getMessage());
+		error.setMessage("USER NOT FOUND");
 		return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
 	}
 	
