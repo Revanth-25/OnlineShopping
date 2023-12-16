@@ -34,44 +34,47 @@ public class AdminService {
 	public String addProducts(ProductDto productDto) {
 
 		Optional<User> userOptional = userRepository.findByEmailIgnoreCase(productDto.getUserEmail());
-		if (userOptional.get().getUserType() == 'A') {
+		if (userOptional.isPresent()) {
+			User user = userOptional.get();
+			if (user.getUserType() == 'A') {
 
-			if (productDto.getProductId() != 0 && productDto.getProdName() != null && productDto.getProdPrice() != 0
-					&& productDto.getProdStock() != 0 && productDto.getProdDesc() != null
-					&& productDto.getProdManufDate() != null && productDto.getCategoryName() != null) {
-				Optional<Category> categoryOptional = categoryRepository
-						.findByCategoryNameIgnoreCase(productDto.getCategoryName());
-				if (categoryOptional.isPresent()) {
-					Category category = categoryOptional.get();
-					productDto.setCategoryName(category.getCategoryName());
-					Product product = new Product();
-					product.setProductId(productDto.getProductId());
-					product.setProductName(productDto.getProdName());
-					product.setProductPrice(productDto.getProdPrice());
-					product.setProductStock(productDto.getProdStock());
-					product.setProductDescription(productDto.getProdDesc());
-					product.setProductManufactureDate(productDto.getProdManufDate());
-					product.setProductExpiryDate(productDto.getProdExPDate());
-					product.setCategory(category);
-					productRepository.save(product);
-				} else {
-					Product product = new Product();
-					product.setProductId(productDto.getProductId());
-					product.setProductName(productDto.getProdName());
-					product.setProductPrice(productDto.getProdPrice());
-					product.setProductStock(productDto.getProdStock());
-					product.setProductDescription(productDto.getProdDesc());
-					product.setProductManufactureDate(productDto.getProdManufDate());
-					product.setProductExpiryDate(productDto.getProdExPDate());
-					product.getCategory().setCategoryName(productDto.getCategoryName());
+				if (productDto.getProductId() != 0 && productDto.getProdName() != null && productDto.getProdPrice() != 0
+						&& productDto.getProdStock() != 0 && productDto.getProdDesc() != null
+						&& productDto.getProdManufDate() != null && productDto.getCategoryName() != null) {
+					Optional<Category> categoryOptional = categoryRepository
+							.findByCategoryNameIgnoreCase(productDto.getCategoryName());
+					if (categoryOptional.isPresent()) {
+						Category category = categoryOptional.get();
+						productDto.setCategoryName(category.getCategoryName());
+						Product product = new Product();
+						product.setProductId(productDto.getProductId());
+						product.setProductName(productDto.getProdName());
+						product.setProductPrice(productDto.getProdPrice());
+						product.setProductStock(productDto.getProdStock());
+						product.setProductDescription(productDto.getProdDesc());
+						product.setProductManufactureDate(productDto.getProdManufDate());
+						product.setProductExpiryDate(productDto.getProdExPDate());
+						product.setCategory(category);
+						productRepository.save(product);
+					} else {
+						Product product = new Product();
+						product.setProductId(productDto.getProductId());
+						product.setProductName(productDto.getProdName());
+						product.setProductPrice(productDto.getProdPrice());
+						product.setProductStock(productDto.getProdStock());
+						product.setProductDescription(productDto.getProdDesc());
+						product.setProductManufactureDate(productDto.getProdManufDate());
+						product.setProductExpiryDate(productDto.getProdExPDate());
+						product.getCategory().setCategoryName(productDto.getCategoryName());
 
-					productRepository.save(product);
+						productRepository.save(product);
+					}
+					return "Product added Successfully";
 				}
-				return "Product added Successfully";
+				throw new InvalidProductException("FAILED TO ADD PRODUCT.INVALID PRODUCT DETAILS");
 			}
-			throw new InvalidProductException("FAILED TO ADD PRODUCT.INVALID PRODUCT DETAILS");
 		}
-		throw new AdminNotFoundException("YOU ARE NOT AN ADMIN .PLEASE LOGIN AS ADMIN");
+		throw new AdminNotFoundException();
 	}
 
 	@Transactional(readOnly = false)
@@ -79,7 +82,7 @@ public class AdminService {
 		Optional<User> userOptional = userRepository.findByEmailIgnoreCase(productDto.getUserEmail());
 		if (userOptional.isPresent()) {
 			User user = userOptional.get();
-			if (user.getUserType() != 'A') {
+			if (user.getUserType() == 'A') {
 				Optional<Product> prodOptional = productRepository
 						.findByProductNameIgnoreCase(productDto.getProdName());
 				if (prodOptional.isPresent()) {
@@ -118,7 +121,7 @@ public class AdminService {
 			}
 			throw new AdminNotFoundException("YOU ARE NOT AN ADMIN .PLEASE LOGIN AS ADMIN");
 		}
-		throw new AdminNotFoundException("PLEASE LOGIN AS ADMIN");
+		throw new AdminNotFoundException();
 	}
 
 	@Transactional(readOnly = false)
@@ -138,6 +141,6 @@ public class AdminService {
 			}
 			throw new AdminNotFoundException("YOU ARE NOT AN ADMIN .PLEASE LOGIN AS ADMIN");
 		}
-		throw new AdminNotFoundException("PLEASE LOGIN AS ADMIN");
+		throw new AdminNotFoundException();
 	}
 }

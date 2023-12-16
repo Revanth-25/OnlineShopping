@@ -2,6 +2,13 @@ package com.onlineshopping.exceptions;
 
 public class AdminNotFoundException extends RuntimeException{
 	private String message;
+	
+	
+
+	public AdminNotFoundException() {
+		super();
+	}
+
 
 	public AdminNotFoundException(String message) {
 		super();
