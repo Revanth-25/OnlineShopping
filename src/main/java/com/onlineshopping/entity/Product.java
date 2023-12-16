@@ -78,6 +78,18 @@ public class Product {
 	}
 
 	public Product(int productId , String productName, double productPrice, String productDescription, int productStock,
+			LocalDate productExpiryDate, LocalDate productManufactureDate,Category category) {
+		super();
+		this.productId=productId;
+		this.productName = productName;
+		this.productPrice = productPrice;
+		this.productDescription = productDescription;
+		this.productStock = productStock;
+		this.productExpiryDate = productExpiryDate;
+		this.productManufactureDate = productManufactureDate;
+		this.category=category;
+	}
+	public Product(int productId , String productName, double productPrice, String productDescription, int productStock,
 			LocalDate productExpiryDate, LocalDate productManufactureDate) {
 		super();
 		this.productId=productId;
