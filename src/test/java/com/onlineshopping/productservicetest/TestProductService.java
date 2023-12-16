@@ -93,6 +93,7 @@ class TestProductService {
 	
 	@Test
 	void viewByCategory_CategoryNotFound() {
+		Mockito.when(categoryRepository.findByCategoryNameIgnoreCase("Category1")).thenReturn(Optional.empty());
 		Assertions.assertThrows(CategoryNotFoundException.class, ()-> productService.viewByCategory("Category1"));
 	}
 
@@ -109,6 +110,7 @@ class TestProductService {
 	
 	@Test
 	void viewProductByName_ProductNotFound() {
+		Mockito.when(categoryRepository.findByCategoryNameIgnoreCase("Category1")).thenReturn(Optional.empty());
 		Assertions.assertThrows(ProductNotFoundException.class, ()-> productService.viewProductByName("Category1"));
 	}
 

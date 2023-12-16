@@ -23,7 +23,7 @@ import com.onlineshopping.repository.UserRepository;
 import com.onlineshopping.serviceimpl.AdminService;
 
 @SpringBootTest
-public class TestAdminService {
+class TestAdminService {
 
 	@InjectMocks
 	private AdminService adminService;

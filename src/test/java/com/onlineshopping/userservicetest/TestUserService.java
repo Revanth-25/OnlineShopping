@@ -169,6 +169,7 @@ class TestUserService {
 		// Create a userDto with a non-existent email
 		UserDto userDto = new UserDto();
 		userDto.setUserEmail("notexistinguser@gmail.com");
+		Mockito.when(userRepository.findByEmailIgnoreCase(Mockito.anyString())).thenReturn(Optional.empty());
 		Assertions.assertThrows(UserNotFoundException.class, () -> userService.userLogin(userDto));
 	}
 	
@@ -209,6 +210,7 @@ class TestUserService {
 	    // Create a userDto for a non-existent user
 		UserDto userDto = new UserDto();
 		userDto.setUserEmail("notexistinguser@gmail.com");
+		Mockito.when(userRepository.findByEmailIgnoreCase(Mockito.anyString())).thenReturn(Optional.empty());
 		Assertions.assertThrows(UserNotFoundException.class, () -> userService.getUserProfileByEmail("notexistinguser@gmail.com"));
 	}
 
@@ -244,6 +246,7 @@ class TestUserService {
 	    // Create a userDto for a non-existent user
 		UserDto userDto = new UserDto();
 		userDto.setUserEmail("notexistinguser@gmail.com");
+		Mockito.when(userRepository.findByEmailIgnoreCase(Mockito.anyString())).thenReturn(Optional.empty());
 		Assertions.assertThrows(UserNotFoundException.class, () -> userService.getUserProfileByEmail("notexistinguser@gmail.com"));
 	}
 	
@@ -338,6 +341,7 @@ class TestUserService {
         // Create a userDto for a non-existent user
         UserDto userDto = new UserDto();
         userDto.setUserName("notexistinguser@gmail.com"); 
+        Mockito.when(userRepository.findByEmailIgnoreCase(Mockito.anyString())).thenReturn(Optional.empty());
         Assertions.assertThrows(UserNotFoundException.class, () -> userService.updatePassword(userDto));
     }
     
@@ -386,6 +390,7 @@ class TestUserService {
 	    // Create a userDto for a non-existent user
 		UserDto userDto = new UserDto();
 		userDto.setUserEmail("gmail.com");
+		Mockito.when(userRepository.findByEmailIgnoreCase(Mockito.anyString())).thenReturn(Optional.empty());
 		Assertions.assertThrows(UserNotFoundException.class,() -> userService.deleteUser(userDto));		
 	}
 }

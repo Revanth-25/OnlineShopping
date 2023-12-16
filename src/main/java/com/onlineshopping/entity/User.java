@@ -54,9 +54,7 @@ public class User {
 		this.address = address;
 	}
 
-//	@JsonIgnore
 	@OneToMany (mappedBy="user" , fetch = FetchType.LAZY)
-//	@JoinColumn(name = "order_id")
 	private List<Order> order;
 	
 	public List<Order> getOrder() {
@@ -67,7 +65,6 @@ public class User {
 		this.order = order;
 	}
 
-//	@JsonIgnore
 	@OneToOne(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	Cart cart;
 	
@@ -90,9 +87,6 @@ public class User {
 		this.email = email;
 		this.phonenumber = phonenumber;
 		this.userType = userType;
-//		this.cart=new Cart();
-//		this.cart.setUser(this);
-		
 	}
 
 	public String getUserName() {
